@@ -1,7 +1,6 @@
 # Virtual environment
 backend/venv/
 
-# API keys — never share these
 backend/.env
 
 # Python cache
@@ -9,7 +8,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Model weights — too large for GitHub
 backend/model.pt
 
 # User data
