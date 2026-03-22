@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agent — AgentOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bk:#0a0a0a;--wh:#fff;--g1:#f5f5f4;--g2:#e8e8e6;--g4:#a0a09a;--g6:#6b6b65;--fd:'Syne',system-ui,sans-serif;--fb:'DM Sans',system-ui,sans-serif;--fm:'DM Mono',monospace}
+html,body{height:100%;overflow:hidden;font-family:var(--fb);background:var(--wh);color:var(--bk);-webkit-font-smoothing:antialiased}
+.shell{display:grid;grid-template-columns:260px 1fr;height:100vh;overflow:hidden}
+.sb{border-right:1px solid var(--g2);display:flex;flex-direction:column;overflow-y:auto;background:var(--g1)}
+.sb::-webkit-scrollbar{width:0}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--g2)}
+.sb-logo{font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:-.02em;text-decoration:none;color:var(--bk)}
+.sb-tag{font-size:11px;color:var(--g4);margin-top:2px}
+.sb-sec{padding:14px 18px}
+.sb-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--g4);font-family:var(--fd);margin-bottom:10px}
+.ti{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--g2);background:var(--wh);margin-bottom:7px}
+.ticon{width:28px;height:28px;border:1px solid var(--g2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.tinfo{flex:1;min-width:0}
+.tname{font-size:12px;font-weight:500;color:var(--bk);font-family:var(--fd)}
+.tdesc{font-size:10px;color:var(--g4);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tstatus{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.sb-upload{padding:0 18px 14px}
+.upload-btn{display:block;width:100%;text-align:center;font-family:var(--fd);font-size:12px;font-weight:700;padding:9px;border:1px dashed var(--g4);background:transparent;color:var(--g6);cursor:pointer;transition:border-color .2s,color .2s;letter-spacing:.02em}
+.upload-btn:hover{border-color:var(--bk);color:var(--bk)}
+.file-list{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.file-item{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--wh);border:1px solid var(--g2);font-size:11px;color:var(--g6)}
+.file-item span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-meta{margin-top:auto;padding:14px 18px;border-top:1px solid var(--g2);font-size:11px;color:var(--g4);line-height:1.9;font-family:var(--fm)}
+.main{display:flex;flex-direction:column;height:100vh}
+.topbar{padding:15px 24px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-family:var(--fd);font-weight:700;font-size:15px}
+.tb-sub{font-size:12px;color:var(--g4)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.spill{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g6);border:1px solid var(--g2);padding:5px 12px}
+.sdot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+.sdot.busy{background:var(--bk);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.new-btn{font-family:var(--fd);font-size:12px;font-weight:700;padding:5px 14px;background:transparent;color:var(--g6);border:1px solid var(--g2);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.new-btn:hover{background:var(--bk);color:var(--wh);border-color:var(--bk)}
+.chat{flex:1;overflow-y:auto;padding:24px 28px 16px;display:flex;flex-direction:column;gap:14px}
+.chat::-webkit-scrollbar{width:4px}
+.chat::-webkit-scrollbar-track{background:transparent}
+.chat::-webkit-scrollbar-thumb{background:var(--g2)}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--g4);padding:40px 20px}
+.empty-title{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--g6)}
+.empty-sub{font-size:13px;text-align:center;max-width:320px;line-height:1.6}
+.suggestions{display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;max-width:420px}
+.sug{padding:10px 14px;border:1px solid var(--g2);background:var(--wh);font-size:13px;color:var(--g6);cursor:pointer;text-align:left;transition:border-color .2s,color .2s;font-family:var(--fb)}
+.sug:hover{border-color:var(--bk);color:var(--bk)}
+.umsg{align-self:flex-end;max-width:62%;background:var(--bk);color:var(--wh);padding:12px 16px;font-size:14px;line-height:1.5}
+.ablock{align-self:flex-start;width:100%;display:flex;flex-direction:column;gap:7px}
+.itlabel{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--g4);font-family:var(--fd);padding:0 2px}
+.thinkb{border:1px solid var(--g2);border-left:3px solid var(--bk);padding:11px 14px;background:var(--wh)}
+.blabel{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--g4);font-family:var(--fd);margin-bottom:4px}
+.thinkt{font-size:13px;color:var(--g6);line-height:1.6}
+.tcallb{border:1px solid var(--g2);padding:9px 14px;background:var(--g1);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tcfn{font-family:var(--fm);font-size:12px;color:var(--bk)}
+.tcarg{font-family:var(--fm);font-size:12px;color:var(--g6);word-break:break-all}
+.tctime{font-family:var(--fm);font-size:11px;color:var(--g4);border:1px solid var(--g2);padding:2px 7px;margin-left:auto;white-space:nowrap;flex-shrink:0}
+.resb{border:1px solid var(--g2);border-left:3px solid var(--g4);padding:11px 14px;background:var(--wh)}
+.rest{font-size:13px;color:var(--g6);line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.finalb{border:1px solid var(--bk);padding:16px 18px;background:var(--wh);box-shadow:4px 4px 0 var(--bk)}
+.fhead{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.fdot{width:8px;height:8px;background:var(--bk);flex-shrink:0}
+.flabel{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--fd)}
+.ftext{font-size:14px;line-height:1.75;color:var(--bk);white-space:pre-wrap;word-break:break-word}
+.doneline{display:flex;align-items:center;gap:8px;padding:3px 2px}
+.doneline::before{content:'';display:block;width:6px;height:6px;background:#22c55e;border-radius:50%;flex-shrink:0}
+.doneline span{font-size:11px;color:var(--g4);font-family:var(--fm)}
+.errb{border:1px solid #e53e3e;border-left:3px solid #e53e3e;padding:11px 14px;background:#fff5f5}
+.errt{font-size:13px;color:#c53030;line-height:1.6}
+.typing-dots{display:flex;gap:4px;padding:12px 14px;background:var(--g1);border:1px solid var(--g2);align-self:flex-start}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--g4);animation:dot 1.2s ease infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+.inputbar{border-top:1px solid var(--g2);padding:14px 20px;display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:var(--wh)}
+.ifield{flex:1;padding:11px 14px;border:1px solid var(--g2);font-family:var(--fb);font-size:14px;color:var(--bk);outline:none;resize:none;line-height:1.5;background:var(--wh);transition:border-color .2s,box-shadow .2s;max-height:120px}
+.ifield:focus{border-color:var(--bk);box-shadow:3px 3px 0 var(--bk)}
+.ifield::placeholder{color:var(--g4)}
+.ifield:disabled{opacity:.5;cursor:not-allowed}
+.runbtn{font-family:var(--fd);font-size:14px;font-weight:700;padding:11px 22px;background:var(--bk);color:var(--wh);border:1px solid var(--bk);cursor:pointer;white-space:nowrap;transition:opacity .2s;letter-spacing:.01em}
+.runbtn:hover:not(:disabled){opacity:.72}
+.runbtn:disabled{opacity:.4;cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sb">
+    <div class="sb-head">
+      <a href="index.html" class="sb-logo">AgentOS</a>
+      <div class="sb-tag">Autonomous AI Agent</div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Connected Tools</div>
+      <div class="ti"><div class="ticon">◎</div><div class="tinfo"><div class="tname">Web Search</div><div class="tdesc">Serper API · live</div></div><div class="tstatus"></div></div>
+      <div class="ti"><div class="ticon">↗</div><div class="tinfo"><div class="tname">Web Fetch</div><div class="tdesc">Read full pages</div></div><div class="tstatus"></div></div>
+      <div class="ti"><div class="ticon">{ }</div><div class="tinfo"><div class="tname">Code Runner</div><div class="tdesc">Python sandbox</div></div><div class="tstatus"></div></div>
+      <div class="ti"><div class="ticon">±</div><div class="tinfo"><div class="tname">Calculator</div><div class="tdesc">Math expressions</div></div><div class="tstatus"></div></div>
+      <div class="ti"><div class="ticon">◈</div><div class="tinfo"><div class="tname">Weather API</div><div class="tdesc">Live forecasts</div></div><div class="tstatus"></div></div>
+      <div class="ti"><div class="ticon">⬡</div><div class="tinfo"><div class="tname">File Reader</div><div class="tdesc">PDF, CSV, JSON</div></div><div class="tstatus"></div></div>
+    </div>
+    <div class="sb-upload">
+      <div class="sb-label">Upload File</div>
+      <button class="upload-btn" onclick="triggerUpload()">+ Upload file</button>
+      <input type="file" id="fileInput" style="display:none" accept=".pdf,.csv,.json,.txt,.md" onchange="handleUpload(event)"/>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <div class="sb-meta">model: self trained<br>max iterations: 10<br>memory: session</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">New Session</div>
+        <div class="tb-sub" id="sessionSub">connecting...</div>
+      </div>
+      <div class="tb-right">
+        <div class="spill"><div class="sdot" id="statusDot"></div><span id="statusText">Connecting...</span></div>
+        <button class="new-btn" onclick="newSession()">New session</button>
+      </div>
+    </div>
+
+    <div class="chat" id="chat">
+      <div class="empty-state" id="emptyState">
+        <div style="font-size:32px;color:var(--g2)">◎</div>
+        <div class="empty-title">What's your goal?</div>
+        <p class="empty-sub">Give me any task — I'll search the web, run code, read files, and figure it out.</p>
+        <div class="suggestions">
+          <button class="sug" onclick="fillSug(this)">What are the top AI papers published this month?</button>
+          <button class="sug" onclick="fillSug(this)">Write Python to generate the first 100 Fibonacci numbers</button>
+          <button class="sug" onclick="fillSug(this)">What's the weather in Tokyo right now?</button>
+          <button class="sug" onclick="fillSug(this)">Calculate compound interest on ₹50,000 at 8% for 10 years</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="inputbar">
+      <textarea class="ifield" id="inp" placeholder="Give the agent a goal..." rows="1" onkeydown="hk(event)" oninput="rzs(this)"></textarea>
+      <button class="runbtn" id="runBtn" onclick="run()">Run →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+const API='http://localhost:8000';
+let sessionId=null,busy=false,startTime=0;
+
+async function init(){
+  try{
+    const r=await fetch(`${API}/session/new`,{method:'POST'});
+    const d=await r.json();
+    sessionId=d.session_id;
+    document.getElementById('sessionSub').textContent=`session: ${sessionId.slice(0,8)}...`;
+    setStatus('Agent ready',false);
+  }catch(e){
+    setStatus('Backend offline',false);
+    document.getElementById('sessionSub').textContent='Start the backend server';
+    showError('Cannot connect to backend at localhost:8000. Run: uvicorn main:app --reload');
+  }
+}
+
+async function newSession(){
+  if(busy)return;
+  if(sessionId){try{await fetch(`${API}/session/${sessionId}`,{method:'DELETE'});}catch(e){}}
+  sessionId=null;
+  document.getElementById('fileList').innerHTML='';
+  const chat=document.getElementById('chat');
+  const empty=document.getElementById('emptyState');
+  chat.innerHTML='';
+  chat.appendChild(empty);
+  empty.style.display='flex';
+  await init();
+}
+
+function rzs(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();run();}}
+function fillSug(btn){const i=document.getElementById('inp');i.value=btn.textContent;rzs(i);i.focus();document.getElementById('emptyState').style.display='none';}
+
+function setStatus(text,isBusy){
+  busy=isBusy;
+  document.getElementById('statusText').textContent=text;
+  document.getElementById('statusDot').className='sdot'+(isBusy?' busy':'');
+  document.getElementById('inp').disabled=isBusy;
+  document.getElementById('runBtn').disabled=isBusy;
+}
+
+function showError(msg){
+  const chat=document.getElementById('chat');
+  const el=document.createElement('div');
+  el.className='errb';
+  el.innerHTML=`<div class="errt">⚠ ${msg}</div>`;
+  chat.appendChild(el);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function triggerUpload(){document.getElementById('fileInput').click();}
+
+async function handleUpload(e){
+  const file=e.target.files[0];
+  if(!file||!sessionId)return;
+  const fd=new FormData();fd.append('file',file);
+  try{
+    const r=await fetch(`${API}/session/${sessionId}/upload`,{method:'POST',body:fd});
+    const d=await r.json();
+    if(d.error){showError(d.error);return;}
+    const fl=document.getElementById('fileList');
+    const item=document.createElement('div');
+    item.className='file-item';
+    item.innerHTML=`<span>⬡ ${file.name}</span><small style="color:var(--g4)">${d.size_kb}KB</small>`;
+    fl.appendChild(item);
+    addUserMsg(`Analyze the uploaded file: ${file.name}`);
+    await streamAgent(`Analyze the uploaded file: ${file.name}`);
+  }catch(err){showError('Upload failed: '+err.message);}
+  e.target.value='';
+}
+
+function addUserMsg(text){
+  document.getElementById('emptyState').style.display='none';
+  const chat=document.getElementById('chat');
+  const el=document.createElement('div');el.className='umsg';el.textContent=text;
+  chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+}
+
+function addTyping(){
+  const chat=document.getElementById('chat');
+  const el=document.createElement('div');el.className='typing-dots';el.id='typing';
+  el.innerHTML='<span></span><span></span><span></span>';
+  chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+}
+
+function rmTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+function getBlock(iter){
+  const chat=document.getElementById('chat');
+  let b=document.getElementById(`b${iter}`);
+  if(!b){
+    b=document.createElement('div');b.className='ablock';b.id=`b${iter}`;
+    const lbl=document.createElement('div');lbl.className='itlabel';lbl.textContent=`iteration ${iter}`;
+    b.appendChild(lbl);chat.appendChild(b);
+  }
+  return b;
+}
+
+function handleEvent(ev){
+  const chat=document.getElementById('chat');
+  if(ev.type==='thinking'){
+    const b=getBlock(ev.iteration||1);
+    let tb=b.querySelector('.thinkb');
+    if(!tb){tb=document.createElement('div');tb.className='thinkb';tb.innerHTML='<div class="blabel">thinking</div><div class="thinkt"></div>';b.appendChild(tb);}
+    tb.querySelector('.thinkt').textContent+=ev.text;
+    chat.scrollTop=chat.scrollHeight;
+  }
+  else if(ev.type==='tool_call'){
+    const b=getBlock(ev.iteration||1);
+    const el=document.createElement('div');el.className='tcallb';
+    const args=Object.entries(ev.inputs).map(([k,v])=>`${k}="${String(v).slice(0,55)}${String(v).length>55?'...':''}"`).join(', ');
+    el.innerHTML=`<span class="tcfn">${ev.tool}(</span><span class="tcarg">${args}</span><span class="tcfn">)</span>`;
+    b.appendChild(el);setStatus(`Running ${ev.tool}...`,true);chat.scrollTop=chat.scrollHeight;
+  }
+  else if(ev.type==='tool_result'){
+    const b=getBlock(ev.iteration||1);
+    const el=document.createElement('div');el.className='resb';
+    const r=ev.result;let summary='';
+    if(r.error)summary=`Error: ${r.error}`;
+    else if(ev.tool==='web_search')summary=`Found ${r.total||0} results. ${(r.results||[]).slice(0,2).map(x=>x.title).join(' · ')}`;
+    else if(ev.tool==='web_fetch')summary=`${r.title||r.url} — ${r.length||0} chars`;
+    else if(ev.tool==='run_python')summary=r.stdout?r.stdout.slice(0,240):(r.stderr||'Executed.');
+    else if(ev.tool==='calculate')summary=r.success?`= ${r.result}`:r.error;
+    else if(ev.tool==='get_weather')summary=r.current?`${r.location}: ${r.current.temp}, ${r.current.description}`:r.error||'Done';
+    else if(ev.tool==='read_file')summary=r.error||`${(r.type||'').toUpperCase()} parsed — ${r.pages||r.rows||r.lines||''} ${r.type==='pdf'?'pages':r.type==='csv'?'rows':'lines'}`;
+    else summary=JSON.stringify(r).slice(0,200);
+    el.innerHTML=`<div class="blabel">result <span style="color:var(--g4);font-size:10px;margin-left:4px">${ev.elapsed}s</span></div><div class="rest">${summary}</div>`;
+    b.appendChild(el);setStatus('Agent thinking...',true);chat.scrollTop=chat.scrollHeight;
+  }
+  else if(ev.type==='final_answer'){
+    const el=document.createElement('div');el.className='finalb';
+    el.innerHTML='<div class="fhead"><div class="fdot"></div><div class="flabel">Final Answer</div></div><div class="ftext"></div>';
+    el.querySelector('.ftext').textContent=ev.text;
+    chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+  }
+  else if(ev.type==='done'){
+    const elapsed=((Date.now()-startTime)/1000).toFixed(1);
+    const el=document.createElement('div');el.className='doneline';
+    el.innerHTML=`<span>done in ${ev.iterations} iteration${ev.iterations!==1?'s':''} · ${elapsed}s</span>`;
+    chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+  }
+  else if(ev.type==='error'){showError(ev.message);}
+}
+
+async function run(){
+  const inp=document.getElementById('inp');
+  const val=inp.value.trim();
+  if(!val||busy)return;
+  if(!sessionId){await init();}
+  inp.value='';inp.style.height='auto';
+  addUserMsg(val);
+  await streamAgent(val);
+}
+
+async function streamAgent(msg){
+  addTyping();setStatus('Agent thinking...',true);startTime=Date.now();
+  try{
+    const res=await fetch(`${API}/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,session_id:sessionId})});
+    if(!res.ok)throw new Error(`Server error: ${res.status}`);
+    const reader=res.body.getReader();const dec=new TextDecoder();let buf='';
+    rmTyping();
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue;
+        try{handleEvent(JSON.parse(line.slice(6)));}catch(e){}
+      }
+    }
+  }catch(err){rmTyping();showError(err.message||'Something went wrong. Is the backend running on port 8000?');}
+  finally{setStatus('Agent ready',false);}
+}
+
+init();
+</script>
+</body>
+</html>

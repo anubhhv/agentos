@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgentOS — Autonomous AI Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bk:#0a0a0a;--wh:#fff;--g1:#f5f5f4;--g2:#e8e8e6;--g4:#a0a09a;--g6:#6b6b65;--fd:'Syne',system-ui,sans-serif;--fb:'DM Sans',system-ui,sans-serif;--fm:'DM Mono',monospace}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--wh);color:var(--bk);line-height:1.6;-webkit-font-smoothing:antialiased}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--g2)}
+.logo{font-family:var(--fd);font-weight:800;font-size:17px;letter-spacing:-.02em;text-decoration:none;color:var(--bk)}
+.nav-links{display:flex;gap:36px}
+.nav-links a{font-size:13px;font-weight:500;text-decoration:none;color:var(--g6);letter-spacing:.02em;transition:color .2s}
+.nav-links a:hover{color:var(--bk)}
+.nav-cta{font-family:var(--fd);font-size:13px;font-weight:700;padding:9px 22px;background:var(--bk);color:var(--wh);text-decoration:none;transition:opacity .2s}
+.nav-cta:hover{opacity:.72}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:130px 48px 90px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:22px;animation:fu .5s ease both}
+.eyebrow::before,.eyebrow::after{content:'✦';font-size:10px;color:var(--g4)}
+.ltag{font-family:var(--fd);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--g4)}
+.htitle{font-family:var(--fd);font-size:clamp(72px,11vw,128px);font-weight:800;line-height:.9;letter-spacing:-.04em;margin-bottom:10px;animation:fu .5s .08s ease both}
+.hyear{font-family:var(--fd);font-size:20px;font-weight:400;color:var(--g4);position:absolute;top:148px;right:calc(50% - 250px)}
+.hdiv{width:360px;border:none;border-top:2px dashed var(--g2);margin:18px auto;animation:fu .5s .13s ease both}
+.hsub{font-size:17px;color:var(--g6);margin-bottom:34px;max-width:460px;line-height:1.65;animation:fu .5s .17s ease both}
+.hsub strong{color:var(--bk);font-weight:500}
+.hpill{display:inline-block;border:1px solid var(--bk);padding:10px 28px;font-family:var(--fd);font-size:13px;font-weight:500;letter-spacing:.04em;margin-bottom:32px;animation:fu .5s .21s ease both}
+.hbtns{display:flex;gap:14px;justify-content:center;animation:fu .5s .25s ease both}
+.hscroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:fu .5s .4s ease both}
+.hscroll span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--g4);font-family:var(--fd)}
+.arr{font-size:18px;color:var(--g4);animation:bob 1.8s ease infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.dot{position:absolute;border-radius:50%;background:var(--bk);pointer-events:none}
+.ring{position:absolute;border-radius:50%;border:1.5px dashed var(--g2);pointer-events:none}
+.btn-p{display:inline-block;font-family:var(--fd);font-size:14px;font-weight:700;padding:13px 32px;background:var(--bk);color:var(--wh);text-decoration:none;border:1px solid var(--bk);cursor:pointer;transition:opacity .2s;letter-spacing:.01em}
+.btn-p:hover{opacity:.72}
+.btn-s{display:inline-block;font-family:var(--fd);font-size:14px;font-weight:700;padding:13px 32px;background:transparent;color:var(--bk);text-decoration:none;border:1px solid var(--bk);cursor:pointer;transition:background .2s,color .2s;letter-spacing:.01em}
+.btn-s:hover{background:var(--bk);color:var(--wh)}
+sec{display:block;padding:96px 80px}
+.sec-eye{text-align:center;margin-bottom:12px}
+.sec-title{font-family:var(--fd);font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-.03em;text-align:center;margin-bottom:56px;line-height:1.1}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--bk)}
+.fc{padding:40px 36px;border-right:1px solid var(--bk)}
+.fc:last-child{border-right:none}
+.ficon{width:42px;height:42px;border:1px solid var(--bk);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:18px}
+.ftitle{font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:10px;letter-spacing:-.02em}
+.fdesc{font-size:14px;color:var(--g6);line-height:1.65}
+.hiw{background:var(--g1);border-top:1px solid var(--g2);border-bottom:1px solid var(--g2);padding:96px 80px}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--bk)}
+.st{padding:40px 36px;border-right:1px solid var(--bk);position:relative}
+.st:last-child{border-right:none}
+.snum{font-family:var(--fd);font-size:68px;font-weight:800;color:var(--g2);line-height:1;margin-bottom:14px;letter-spacing:-.04em}
+.stitle{font-family:var(--fd);font-size:19px;font-weight:700;margin-bottom:10px;letter-spacing:-.02em}
+.sdesc{font-size:14px;color:var(--g6);line-height:1.65}
+.sarr{position:absolute;right:-13px;top:50%;transform:translateY(-50%);background:var(--g1);padding:4px 2px;font-size:18px;color:var(--g4);z-index:1}
+.cta{text-align:center;padding:100px 48px}
+.cta-title{font-family:var(--fd);font-size:clamp(34px,5vw,56px);font-weight:800;letter-spacing:-.03em;margin-bottom:18px;line-height:1.05}
+.cta-sub{font-size:15px;color:var(--g6);margin-bottom:36px}
+.cta-btns{display:flex;gap:14px;justify-content:center}
+footer{border-top:1px solid var(--g2);padding:28px 48px;display:flex;align-items:center;justify-content:space-between}
+.fl{display:flex;gap:28px}
+.fl a{font-size:12px;color:var(--g6);text-decoration:none;transition:color .2s}
+.fl a:hover{color:var(--bk)}
+.copy{font-size:12px;color:var(--g4)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">AgentOS</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="login.html">Log in</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<div class="hero">
+  <div class="ring" style="width:110px;height:110px;top:108px;left:64px"></div>
+  <div class="ring" style="width:64px;height:64px;top:118px;right:90px"></div>
+  <div class="ring" style="width:210px;height:210px;bottom:50px;right:44px"></div>
+  <div class="dot" style="width:9px;height:9px;top:194px;left:316px"></div>
+  <div class="dot" style="width:8px;height:8px;top:290px;right:310px"></div>
+  <div class="dot" style="width:11px;height:11px;bottom:150px;left:210px"></div>
+  <div class="eyebrow"><span class="ltag">Autonomous AI Agent</span></div>
+  <div class="htitle">AgentOS</div>
+  <span class="hyear">'26</span>
+  <hr class="hdiv"/>
+  <p class="hsub">Give it a goal. It <strong>reasons, acts, and delivers</strong> — searching the web, running code, and reading files until the task is done.</p>
+  <div class="hpill">Reason &times; Act &times; Observe &times; Repeat</div>
+  <div class="hbtns">
+    <a href="agent.html" class="btn-p">Try the Agent</a>
+    <a href="#how" class="btn-s">See how it works</a>
+  </div>
+  <div class="hscroll"><span>Scroll down</span><div class="arr">↓</div></div>
+</div>
+
+<div id="features" style="padding:96px 80px">
+  <div class="sec-eye"><span class="ltag">What it can do</span></div>
+  <h2 class="sec-title">Built to act, not just answer</h2>
+  <div class="fg">
+    <div class="fc"><div class="ficon">◎</div><div class="ftitle">Web Search</div><p class="fdesc">Searches the live web in real time. Gets current prices, news, and research papers with no training data cutoff.</p></div>
+    <div class="fc"><div class="ficon">{ }</div><div class="ftitle">Code Execution</div><p class="fdesc">Writes Python, runs it in a secure sandbox, reads the output, and debugs if it fails — entirely on its own.</p></div>
+    <div class="fc"><div class="ficon">⬡</div><div class="ftitle">File Analysis</div><p class="fdesc">Upload any PDF or CSV and the agent will parse, extract, and reason over the content to answer your questions.</p></div>
+  </div>
+</div>
+
+<div id="how" class="hiw">
+  <div class="sec-eye"><span class="ltag">The ReAct loop</span></div>
+  <h2 class="sec-title">How the agent thinks</h2>
+  <div class="sg">
+    <div class="st"><div class="snum">01</div><div class="stitle">Give it a goal</div><p class="sdesc">Type any task in plain English — research a topic, run an analysis, fetch live data, or write and test code.</p><div class="sarr">→</div></div>
+    <div class="st"><div class="snum">02</div><div class="stitle">It reasons &amp; acts</div><p class="sdesc">The agent decides which tools to use, calls them, reads the results, and decides if it needs to keep going.</p><div class="sarr">→</div></div>
+    <div class="st"><div class="snum">03</div><div class="stitle">Get your answer</div><p class="sdesc">Once satisfied, the agent surfaces a clear final answer — with every step of its reasoning visible to you.</p></div>
+  </div>
+</div>
+
+<div class="cta">
+  <span class="ltag" style="display:block;text-align:center;margin-bottom:12px">Ready to start?</span>
+  <h2 class="cta-title">Stop prompting.<br>Start delegating.</h2>
+  <p class="cta-sub">Create a free account and give the agent its first task in under 60 seconds.</p>
+  <div class="cta-btns">
+    <a href="signup.html" class="btn-p">Create Free Account</a>
+    <a href="login.html" class="btn-s">Log In</a>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html" class="logo">AgentOS</a>
+  <div class="fl">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="login.html">Log in</a>
+    <a href="signup.html">Sign up</a>
+  </div>
+  <span class="copy">© 2026 AgentOS</span>
+</footer>
+
+</body>
+</html>

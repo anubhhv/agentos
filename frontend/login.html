@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Log In — AgentOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bk:#0a0a0a;--wh:#fff;--g1:#f5f5f4;--g2:#e8e8e6;--g4:#a0a09a;--g6:#6b6b65;--fd:'Syne',system-ui,sans-serif;--fb:'DM Sans',system-ui,sans-serif}
+body{font-family:var(--fb);background:var(--g1);color:var(--bk);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.ring{position:absolute;border-radius:50%;border:1.5px dashed var(--g2);pointer-events:none}
+.dot{position:absolute;border-radius:50%;background:var(--bk);pointer-events:none}
+.card{background:var(--wh);border:1px solid var(--bk);padding:48px 44px;width:420px;position:relative;z-index:1;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.card-logo{font-family:var(--fd);font-weight:800;font-size:20px;letter-spacing:-.02em;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--g6);margin-bottom:36px}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--g6);margin-bottom:7px;font-family:var(--fd)}
+.fg input{width:100%;padding:12px 14px;border:1px solid var(--g2);background:var(--wh);font-family:var(--fb);font-size:14px;color:var(--bk);outline:none;transition:border-color .2s,box-shadow .2s}
+.fg input:focus{border-color:var(--bk);box-shadow:3px 3px 0 var(--bk)}
+.fg input::placeholder{color:var(--g4)}
+.forgot{display:block;text-align:right;font-size:12px;color:var(--g6);text-decoration:none;margin-top:-8px;margin-bottom:24px}
+.forgot:hover{color:var(--bk)}
+.btn-p{display:block;width:100%;text-align:center;font-family:var(--fd);font-size:14px;font-weight:700;padding:13px 32px;background:var(--bk);color:var(--wh);border:1px solid var(--bk);cursor:pointer;transition:opacity .2s;letter-spacing:.01em}
+.btn-p:hover{opacity:.72}
+hr{border:none;border-top:1px solid var(--g2);margin:24px 0}
+.alt{display:block;text-align:center;font-size:13px;color:var(--g6)}
+.alt a{color:var(--bk);font-weight:500;text-decoration:none;border-bottom:1px solid var(--bk);padding-bottom:1px}
+.alt a:hover{color:var(--g6)}
+</style>
+</head>
+<body>
+
+<div class="ring" style="width:160px;height:160px;top:60px;left:80px"></div>
+<div class="ring" style="width:80px;height:80px;bottom:100px;right:120px"></div>
+<div class="ring" style="width:300px;height:300px;bottom:-80px;left:-60px"></div>
+<div class="dot" style="width:8px;height:8px;top:180px;left:280px"></div>
+<div class="dot" style="width:10px;height:10px;bottom:200px;left:160px"></div>
+<div class="dot" style="width:7px;height:7px;top:120px;right:240px"></div>
+
+<div class="card">
+  <div class="card-logo">AgentOS</div>
+  <p class="card-sub">Welcome back — log in to your account</p>
+  <form onsubmit="go(event)">
+    <div class="fg">
+      <label for="em">Email</label>
+      <input type="email" id="em" placeholder="you@example.com" required/>
+    </div>
+    <div class="fg">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" placeholder="••••••••" required/>
+    </div>
+    <a href="#" class="forgot">Forgot password?</a>
+    <button type="submit" class="btn-p">Log In →</button>
+  </form>
+  <hr/>
+  <p class="alt">Don't have an account? <a href="signup.html">Sign up</a></p>
+</div>
+
+<script>function go(e){e.preventDefault();window.location.href='agent.html'}</script>
+</body>
+</html>
